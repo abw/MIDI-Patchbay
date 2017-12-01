@@ -24,9 +24,7 @@ void setup() {
     midiC.begin(MIDI_CHANNEL_OMNI);
     midiD.begin(MIDI_CHANNEL_OMNI);
 
-    // disable automatic THRU handling (we don't want the output on
-    // MIDI port A to be flooded by CC messages coming in from the
-    // foot controller on MIDI input A)
+    // disable automatic THRU handling
     midiA.turnThruOff();
     midiB.turnThruOff();
     midiC.turnThruOff();
