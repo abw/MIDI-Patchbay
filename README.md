@@ -1,3 +1,6 @@
+[![GitHub release](https://img.shields.io/github/release/abw/MIDI-Patchbay.svg?maxAge=3600)](https://github.com/abw/MIDI-Patchbay/releases/latest)
+[![License](https://img.shields.io/github/license/abw/MIDI-Patchbay.svg?maxAge=3600)](LICENSE)
+
 # MIDI-Patchbay
 This project contains hardware and firmware for a 4x4 MIDI
 merger/splitter patchbay based on an Arduino MEGA 2560.
