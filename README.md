@@ -35,7 +35,7 @@ merger/splitter without it.
 is the predecessor of the [MIDI-Patchbay-Shield](hardware/MIDI-Patchbay-Shield).
 This is a reduced size shield for the Arduino MEGA 2560 that only has 4
 MIDI inputs and 4 MIDI outputs, along with the relevant circuitry to
-support it.  If you just want a simple MIDI merge/splitter without any
+support it.  If you just want a simple MIDI merger/splitter without any
 extra frills then this is the simplest option as an *alternative* to the
 above.
 
