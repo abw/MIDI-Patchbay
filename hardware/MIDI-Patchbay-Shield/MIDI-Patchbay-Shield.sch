@@ -9324,7 +9324,7 @@ Low profile connectors, straight&lt;p&gt;
 <text x="191.135" y="154.305" size="1.778" layer="91">11</text>
 <text x="191.135" y="156.845" size="1.778" layer="91">12</text>
 <text x="191.135" y="159.385" size="1.778" layer="91">13</text>
-<text x="97.155" y="208.28" size="6.4516" layer="91">Arduino Mega MIDI Merger</text>
+<text x="97.155" y="208.28" size="6.4516" layer="91">MIDI Patchbay Shield</text>
 <text x="165.735" y="52.07" size="1.6764" layer="91">(SS)</text>
 <text x="165.735" y="49.53" size="1.6764" layer="91">(MOSI)</text>
 <text x="203.835" y="52.07" size="1.6764" layer="91">(SCK)</text>
