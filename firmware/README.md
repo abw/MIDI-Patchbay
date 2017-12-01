@@ -3,7 +3,7 @@
 This directory contains firmware for running on the MIDI Patchbay
 [hardware](../hardware).
 
-* [MIDI-Patchbay-Simple](MIDI-Patchbay-Simple.ino) is the firmware
+* [MIDI-Patchbay-Simple.ino](MIDI-Patchbay-Simple.ino) is the firmware
 for the [MIDI-Patchbay-Simple](../hardware/MIDI-Patchbay-Simple) board.
 It can also be used on the [MIDI-Patchbay-Shield](../hardware/MIDI-Patchbay-Shield)
 if you only need simple functionality.  It merges all four MIDI inputs

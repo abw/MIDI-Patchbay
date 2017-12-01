@@ -48,7 +48,18 @@ you see what you're doing.  And of course, a decent soldering iron.
 
 ## Firmware:
 
-Coming soon
+The [firmware](firmware)
+directory contains the source code for the firmware that powers the
+boards listed above.  It is built around the Arduino [MIDI Library](https://github.com/FortySevenEffects/arduino_midi_library)
+by [Forty Seven Effects](https://github.com/FortySevenEffects).
+
+* [MIDI-Patchbay-Simple.ino](firmware/MIDI-Patchbay-Simple.ino) implements
+a simple 4x4 MIDI patchbay that merges all four MIDI inputs and duplicates
+them across all four MIDI outputs.  It is specifically for use with the
+basic [MIDI-Patchbay-Simple](hardware/MIDI-Patchbay-Simple) board, but
+can also be used with the more advanced [MIDI-Patchbay-Shield](hardware/MIDI-Patchbay-Shield)
+if you just need simple functionality.  Or you can use this as a starting
+point for your own implementation of the firmware.
 
 ## Warning:
 
