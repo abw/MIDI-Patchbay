@@ -71,4 +71,4 @@ your own risk.
 
 ## Author
 
-Andy Wardley <abw@wardley.org> November 2017
+Andy Wardley <abw@wardley.org> December 2017
