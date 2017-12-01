@@ -4,7 +4,7 @@ This directory contains the schematic and board layout for a daughter
 board for mounting a 16x2 LCD display and 2 [RGB rotary encoders](https://www.sparkfun.com/products/10982).
 
 This is an optional extra that can be used in conjunction with the
-[MIDI-Patchbay-Shield](https://github.com/abw/MIDI-Patchbay/blob/master/hardware/MIDI-Patchbay-Shield)
+[MIDI-Patchbay-Shield](../MIDI-Patchbay-Shield)
 or with your own projects that require an LCD display and/or encoders.
 
 A 10 pin (2x5) IDC connector is used to connect to the LCD.  A 16 pin

@@ -14,25 +14,25 @@ into any of the outputs.
 
 ## Hardware:
 
-The [hardware](https://github.com/abw/MIDI-Patchbay/blob/master/hardware)
+The [hardware](hardware)
 directory contains Eagle schematics, board designs and Gerber files for
 the following modules.
 
-* [MIDI-Patchbay-Shield](https://github.com/abw/MIDI-Patchbay/blob/master/hardware/MIDI-Patchbay-Shield)
+* [MIDI-Patchbay-Shield](hardware/MIDI-Patchbay-Shield)
 is a shield for an Arduino MEGA 2560 that provides 4 MIDI inputs, 4 MIDI
 outputs and connectors for interfacing to the
-[MIDI-Patchbay-Display](https://github.com/abw/MIDI-Patchbay/blob/master/hardware/MIDI-Patchbay-Display)
+[MIDI-Patchbay-Display](hardware/MIDI-Patchbay-Display)
 board.  It also contains connectors for accessing 8 analog pins and 8
 digital pins for further expansion.  This is the main board that you
 need to build.
 
-* [MIDI-Patchbay-Display](https://github.com/abw/MIDI-Patchbay/blob/master/hardware/MIDI-Patchbay-Display)
+* [MIDI-Patchbay-Display](hardware/MIDI-Patchbay-Display)
 is a board for mounting a 16x2 LCD display and two RGB rotary encoders.
 This is an optional extra.  You can build a fully functioning MIDI
 merger/splitter without it.
 
-* [MIDI-Patchbay-Simple](https://github.com/abw/MIDI-Patchbay/blob/master/hardware/MIDI-Patchbay-Simple)
-is the predecessor of the [MIDI-Patchbay-Shield](https://github.com/abw/MIDI-Patchbay/blob/master/hardware/MIDI-Patchbay-Shield).
+* [MIDI-Patchbay-Simple](hardware/MIDI-Patchbay-Simple)
+is the predecessor of the [MIDI-Patchbay-Shield](hardware/MIDI-Patchbay-Shield).
 This is a reduced size shield for the Arduino MEGA 2560 that only has 4
 MIDI inputs and 4 MIDI outputs, along with the relevant circuitry to
 support it.  If you just want a simple MIDI merge/splitter without any
@@ -54,3 +54,7 @@ Coming soon
 
 These are new designs that haven't been fully tested yet.  Use them at
 your own risk.
+
+## Author
+
+Andy Wardley <abw@wardley.org> November 2017

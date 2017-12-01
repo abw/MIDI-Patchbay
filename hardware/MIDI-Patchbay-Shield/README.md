@@ -8,7 +8,7 @@ This is the main circuit board that you need for the project.
 It has connectors for 4 MIDI inputs and 4 MIDI outputs.
 
 It has LCD and ENCODER connectors which you can use to connect it to the
-[MIDI-Patchbay-Display](https://github.com/abw/MIDI-Patchbay/blob/master/hardware/MIDI-Patchbay-Display)
+[MIDI-Patchbay-Display](../MIDI-Patchbay-Display)
 board.  This is an optional extra for attaching an LCD display and one or
 two rotary encoders.  This allows you to monitor MIDI traffic, program and
 select patches to change the MIDI routing, and generally interface with
