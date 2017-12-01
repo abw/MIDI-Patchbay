@@ -1,7 +1,8 @@
 //---------------------------------------------------------------------
-// tests/lcd.ino
+// tests/lcd
 //
-// Simple test for the LCD.
+// Simple test for the LCD.  Displays "Hello World!" long with the
+// number of seconds elapsed.
 //
 // Written by Andy Wardley <abw@wardley.org> December 2017
 //
@@ -10,7 +11,7 @@
 //---------------------------------------------------------------------
 
 #include <LiquidCrystal.h>
-#include "../MIDI-Patchbay.h"
+#include "MIDI-Patchbay.h"
 
 LiquidCrystal lcd(
     LCD_RS_PIN, LCD_EN_PIN,
