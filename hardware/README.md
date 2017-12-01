@@ -1,7 +1,12 @@
 # Hardware
 
-* [MIDI-Patchbay-Shield](MIDI-Patchbay-Shield) is the main shield you
-need to build.
+This directory contains the schematics and circuit board layouts for
+
+* [MIDI-Patchbay-Shield](MIDI-Patchbay-Shield) adds MIDI IN/OUT
+functionality to an Arduino MEGA 2560, along with connectors for
+the optional [MIDI-Patchbay-Display](MIDI-Patchbay-Display) and
+access to digital and analog pins for adding further switches,
+potentiometers, etc.
 
 * [MIDI-Patchbay-Display](MIDI-Patchbay-Display) is an optional extra
 for mounting an LCD display and rotary encoders.  This is used in
