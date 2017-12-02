@@ -8,6 +8,7 @@
 
 #include <MIDI.h>
 #include <LiquidCrystal.h>
+#include "MIDI-Patchbay.h"
 
 #define NAME    "MIDI Patchbay v2"
 #define AUTHOR  "by Andy Wardley"
@@ -16,8 +17,8 @@
 // constants
 const double SLOW_PULSE_FREQ = 0.5;
 const double FAST_PULSE_FREQ = 10;
-const double PANIC_DELAY     = 2000;
-const double PANIC_FADE      = 2000;
+const double PANIC_DELAY     = 1000;
+const double PANIC_FADE      = 1000;
 
 // global variables
 unsigned long
@@ -31,8 +32,9 @@ void pulsePower(unsigned long ticks);
 void pulsePanic(unsigned long ticks);
 void flashPanic(unsigned long ticks);
 void fadePanic(unsigned long ticks);
+void flashPower(unsigned long ticks);
 void LCDBacklightBrightness(int val);
-void panicButtonPressed();
+bool panicButtonPressed();
 void MIDISendTo(
     midi::MidiInterface<HardwareSerial> from,
     midi::MidiInterface<HardwareSerial> to
@@ -96,7 +98,7 @@ void setup() {
 
 void loop() {
     int activity = 0;
-    unsigned long now = millis();
+    unsigned long now = millis(), ticks = now - start;
 
     // check all four MIDI inputs for data and send to all MIDI outputs
     if (midiA.read()) {
@@ -119,26 +121,29 @@ void loop() {
         if (panicSent) {
             // fade out LED
             fadePanic(now - panicSent);
+            pulsePower(now);
         }
         else {
             if (panicStarted) {
                 if (now - panicStarted > PANIC_DELAY) {
-                    MIDIPanic();
+                    //MIDIPanic();
                     panicSent = now;
                 }
             }
             else {
                 panicStarted = now;
             }
-            flashPanic();
+            flashPanic(now);
+            flashPower(now);
         }
     }
     else {
         panicStarted = panicSent = 0;
-        pulsePanic();
+        pulsePanic(now);
+        pulsePower(now);
     }
 
-    pulsePower();
+    
 
 }
 
@@ -178,6 +183,10 @@ void flashPanic(unsigned long ticks) {
     pulse(ticks, FAST_PULSE_FREQ, 0.5, 0, 255, PANIC_LED_PIN);
 }
 
+void flashPower(unsigned long ticks) {
+    pulse(ticks, FAST_PULSE_FREQ, 0, 0, 128, POWER_LED_PIN);
+}
+
 void fadePanic(unsigned long ticks) {
     int br = 255 - floor(ticks / PANIC_FADE * 255);
     br = br < 0 ? 0 : br;
@@ -188,7 +197,7 @@ void LCDBacklightBrightness(int val) {
     analogWrite(LCD_BL_PIN, val);
 }
 
-void panicButtonPressed() {
+bool panicButtonPressed() {
     return digitalRead(PANIC_SW_PIN) == 0;
 }
 
