@@ -10,15 +10,15 @@
 #ifndef MIDI_PATCHBAY_H
 #define MIDI_PATCHBAY_H
 
-#define ENC1EA_PIN  2
-#define ENC1EB_PIN  3
+#define ENC1EA_PIN  3
+#define ENC1EB_PIN  2
 #define ENC1LR_PIN  8
 #define ENC1LG_PIN  9
 #define ENC1LB_PIN 10
 #define ENC1SW_PIN 36
 
-#define ENC2EA_PIN 20
-#define ENC2EB_PIN 21
+#define ENC2EA_PIN 21
+#define ENC2EB_PIN 20
 #define ENC2LR_PIN  5
 #define ENC2LG_PIN  6
 #define ENC2LB_PIN  7

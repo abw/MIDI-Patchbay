@@ -16,8 +16,13 @@
 #include <math.h>
 #include "MIDI-Patchbay.h"
 
-const double POWER_PULSE_FREQ = 0.5;
-const double PHASE_FACTOR = POWER_PULSE_FREQ * 2 * M_PI / 1000;
+const double SLOW_PULSE_FREQ = 0.5;
+const double SLOW_FACTOR = SLOW_PULSE_FREQ * 2 * M_PI / 1000;
+const double FAST_PULSE_FREQ = 10;
+const double FAST_FACTOR = FAST_PULSE_FREQ * 2 * M_PI / 1000;
+const int    LED_MIN = 16;
+const int    LED_MAX = 192;
+const int    LED_RANGE = LED_MAX - LED_MIN;
 unsigned long start;
 
 void setup() {
@@ -27,22 +32,29 @@ void setup() {
     start = millis();
 }
 
-void loop() {
-    int pressed = digitalRead(PANIC_SW_PIN);
-    unsigned long ticks = millis() - start;
+int pulse(unsigned long ticks, double factor) {
+    return LED_MIN + floor((sin(factor * ticks) + 1) / 2 * LED_RANGE);   // scaled from 0 to 255
+}
 
-    if (pressed) {
-        // if the panic button is pressed then turn the panic LED on...
-        analogWrite(PANIC_LED_PIN, 255);
+int slow(unsigned long ticks) {
+    return pulse(ticks, SLOW_FACTOR);
+}
+
+int fast(unsigned long ticks) {
+    return pulse(ticks, FAST_FACTOR);
+}
+void loop() {
+    int unpressed = digitalRead(PANIC_SW_PIN);
+    unsigned long ticks = millis() - start;
+     
+    if (unpressed) {
+        // if the panic button is NOT pressed then pulse slow
+       analogWrite(PANIC_LED_PIN, slow(ticks));
     }
     else {
-        // ...otherwise turn it off
-        analogWrite(PANIC_LED_PIN, 0);
+        // ...otherwise fast
+        analogWrite(PANIC_LED_PIN, fast(ticks));
     }
-
-    // pulse the power LED
-    double phase  = ticks * PHASE_FACTOR;  // phase angle from 0 to 2PI
-    double factor = (sin(phase) + 1) / 2;  // normalised from 0 to 1
-    int    pulse  = floor(factor * 255);   // scaled from 0 to 255
-    analogWrite(POWER_LED_PIN, pulse);
+   
+    analogWrite(POWER_LED_PIN, slow(ticks));
 }
