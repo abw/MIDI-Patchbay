@@ -8,32 +8,17 @@
 
 #include <MIDI.h>
 #include <LiquidCrystal.h>
+#include <Encoder.h>
 #include "MIDI-Patchbay.h"
+#include "Config.hpp"
+#include "Menus.hpp"
+#include "LCD.hpp"
+#include "LED.hpp"
+#include "Knob.hpp"
+#include "Menu.hpp"
+#include "MenuItem.hpp"
+#include "Patch.hpp"
 
-#define NAME    "MIDI Patchbay v2"
-#define AUTHOR  "by Andy Wardley"
-#define USE_LCD 1
-
-// constants
-const double SLOW_PULSE_FREQ = 0.5;
-const double FAST_PULSE_FREQ = 10;
-const double PANIC_DELAY     = 1000;
-const double PANIC_FADE      = 1000;
-
-// global variables
-unsigned long
-    start        = 0,
-    panicSent    = 0,
-    panicStarted = 0;
-
-// function prototypes
-int  pulse(unsigned long ticks, float frequency, float phase, int min, int max, int pin);
-void pulsePower(unsigned long ticks);
-void pulsePanic(unsigned long ticks);
-void flashPanic(unsigned long ticks);
-void fadePanic(unsigned long ticks);
-void flashPower(unsigned long ticks);
-void LCDBacklightBrightness(int val);
 bool panicButtonPressed();
 void MIDISendTo(
     midi::MidiInterface<HardwareSerial> from,
@@ -42,6 +27,13 @@ void MIDISendTo(
 void MIDISendToAll(
     midi::MidiInterface<HardwareSerial> from
 );
+
+void displayMenu();
+void displayMenuItem();
+void changeMenuItem(Knob *knob);
+void changeMenu(Knob *knob);
+void selectMenu(Knob *knob);
+void unselectMenu(Knob *knob);
 
 // Arduino Mega 2560 has 4 hardware serial ports for MIDI to use
 MIDI_CREATE_INSTANCE(HardwareSerial, Serial,  midiA);
@@ -55,6 +47,25 @@ LiquidCrystal lcd(
     LCD_D4_PIN, LCD_D5_PIN, LCD_D6_PIN, LCD_D7_PIN
 );
 
+// Encoders
+Encoder Enc1(ENC1EA_PIN, ENC1EB_PIN);
+Encoder Enc2(ENC2EA_PIN, ENC2EB_PIN);
+
+// Encoder 1 is on the left of the PCB and encoder 2 is on the right.
+// When viewed from the front we end up with encoder 1 on the right and
+// 2 on the left.
+Knob leftKnob(
+    ENC2SW_PIN, ENC2LR_PIN, ENC2LG_PIN, ENC2LB_PIN,
+    &Enc2
+);
+
+Knob rightKnob(
+    ENC1SW_PIN, ENC1LR_PIN, ENC1LG_PIN, ENC1LB_PIN,
+    &Enc1
+);
+
+bool patchSelect = 0;
+
 //---------------------------------------------------------------------
 // Setup
 //---------------------------------------------------------------------
@@ -65,31 +76,33 @@ void setup() {
     pinMode(PANIC_LED_PIN, OUTPUT);
     pinMode(PANIC_SW_PIN, INPUT);
 
-    // initialise the LCD
-    lcd.begin(16, 2);
-    lcd.setCursor(0, 0);
-    lcd.print(NAME);
-    lcd.setCursor(0, 1);
-    lcd.print(AUTHOR);
 
-    // turn the LCD backlight on
-    pinMode(LCD_BL_PIN, OUTPUT);
-    LCDBacklightBrightness(255);
+    Serial.begin(9600);
+    Serial.println("Debugging MIDI Patchbay");
+
+    initLCD(&lcd);
 
     // listen to all MIDI channels on all 4 inputs
-    midiA.begin(MIDI_CHANNEL_OMNI);
-    midiB.begin(MIDI_CHANNEL_OMNI);
-    midiC.begin(MIDI_CHANNEL_OMNI);
-    midiD.begin(MIDI_CHANNEL_OMNI);
+    //midiA.begin(MIDI_CHANNEL_OMNI);
+    //midiB.begin(MIDI_CHANNEL_OMNI);
+    //midiC.begin(MIDI_CHANNEL_OMNI);
+    //midiD.begin(MIDI_CHANNEL_OMNI);
 
-    // disable automatic THRU handling
-    midiA.turnThruOff();
-    midiB.turnThruOff();
-    midiC.turnThruOff();
-    midiD.turnThruOff();
+    //// disable automatic THRU handling
+    //midiA.turnThruOff();
+    //midiB.turnThruOff();
+    //midiC.turnThruOff();
+    //midiD.turnThruOff();
 
     // start the clock
     start = millis();
+
+    loadConfig();
+
+    leftKnob.onChange(&changeMenu);
+    leftKnob.onPress(&selectMenu);
+    leftKnob.onHold(&unselectMenu);
+    rightKnob.onChange(&changeMenuItem);
 }
 
 //---------------------------------------------------------------------
@@ -114,6 +127,14 @@ void loop() {
         MIDISendToAll(midiD);
     }
 
+    // read encoders, pulse the LEDs if they're not being used
+    if (! leftKnob.read()) {
+        pulseEncLeft(now);
+    }
+    if (! rightKnob.read()) {
+        pulseEncRight(now);
+    }
+
     // TODO: monitor MIDI and send to LCD / Encoder LEDs
 
     // check panic button
@@ -125,7 +146,7 @@ void loop() {
         }
         else {
             if (panicStarted) {
-                if (now - panicStarted > PANIC_DELAY) {
+                if (now - panicStarted > panicDelay) {
                     //MIDIPanic();
                     panicSent = now;
                 }
@@ -142,65 +163,103 @@ void loop() {
         pulsePanic(now);
         pulsePower(now);
     }
-
-    
-
-}
-
-//---------------------------------------------------------------------
-// LED pulsing functions
-//---------------------------------------------------------------------
-
-int pulse(
-    unsigned long ticks,        // current milliseconds since start
-    float frequency,            // frequency in Hz
-    float phase,                // phase angle from 0 to 1
-    int min, int max,           // min and max LED values from 0 to 255
-    int pin                     // output PWM pin
-) {
-    analogWrite(
-        pin,
-        min + floor(
-            (max - min)
-        *   (
-                sin(
-                    (ticks * frequency / 1000 + phase) * M_PI * 2
-                ) + 1
-            ) / 2
-        )
-    );
-}
-
-void pulsePower(unsigned long ticks) {
-    pulse(ticks, SLOW_PULSE_FREQ, 0, 16, 255, POWER_LED_PIN);
-}
-
-void pulsePanic(unsigned long ticks) {
-    pulse(ticks, SLOW_PULSE_FREQ, 0.5, 16, 255, PANIC_LED_PIN);
-}
-
-void flashPanic(unsigned long ticks) {
-    pulse(ticks, FAST_PULSE_FREQ, 0.5, 0, 255, PANIC_LED_PIN);
-}
-
-void flashPower(unsigned long ticks) {
-    pulse(ticks, FAST_PULSE_FREQ, 0, 0, 128, POWER_LED_PIN);
-}
-
-void fadePanic(unsigned long ticks) {
-    int br = 255 - floor(ticks / PANIC_FADE * 255);
-    br = br < 0 ? 0 : br;
-    analogWrite(PANIC_LED_PIN, br);
-}
-
-void LCDBacklightBrightness(int val) {
-    analogWrite(LCD_BL_PIN, val);
 }
 
 bool panicButtonPressed() {
     return digitalRead(PANIC_SW_PIN) == 0;
 }
 
+//---------------------------------------------------------------------
+// Knob functions
+//---------------------------------------------------------------------
+
+void showMenus() {
+    menuOn = 1;
+    menuIn = 0;
+    menu   = menus[menuIndex];
+    patchSelect = 0;
+    leftKnob.setRange(0, menuMax);
+    leftKnob.setValue(menuIndex);
+    initLCDMenuCharset(&lcd);
+    displayMenuName();
+}
+
+void hideMenus() {
+    menuOn = 0;
+    menuIn = 0;
+    welcomeScreen(&lcd);
+}
+
+void displayMenu() {
+    menu->attach(&lcd, &leftKnob, &rightKnob);
+    menu->display();
+}
+
+void displayMenuName() {
+    menu->attach(&lcd, &leftKnob, &rightKnob);
+    menu->displayName();
+}
+
+void displayPatch() {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Patch ");
+    lcd.setCursor(6, 0);
+    lcd.print(patchIndex + 1);
+    lcd.setCursor(0, 1);
+    lcd.print(patch.getName());
+}
+
+void selectMenu(Knob *knob) {
+    if (menuOn && ! menuIn) {
+        patchSelect = 0;
+        menuIn = 1;
+        displayMenu();
+    }
+    else {
+        showMenus();
+    }
+}
+
+void changeMenu(Knob *knob) {
+    //Serial.println("TODO: changeMenu()");
+    if (menuIn) {
+        menu->change(knob->getValue());
+    }
+    else if (menuOn) {
+        menuIndex = knob->getValue();
+        menuIndex = menuIndex < 0 ? 0 : menuIndex > menuMax ? menuMax : menuIndex;
+        menu = menus[menuIndex];
+        displayMenuName();
+    }
+    else {
+        showMenus();
+    }
+}
+
+
+void unselectMenu(Knob *knob) {
+    hideMenus();
+}
+
+void changeMenuItem(Knob *knob) {
+    if (menuOn && menuIn) {
+        menu->changeItem(knob->getValue());
+    }
+    else if (patchSelect) {
+        patchIndex = knob->getValue();
+        patchIndex = patchIndex < 0 ? 0 : patchIndex > patchMax ? patchMax : patchIndex;
+        patch = patches[patchIndex];
+        displayPatch();
+    }
+    else {
+        patchSelect = 1;
+        // program knob
+        rightKnob.setRange(0, patchMax);
+        rightKnob.setValue(patchIndex);
+        displayPatch();
+    }
+}
 
 //---------------------------------------------------------------------
 // MIDI functions
