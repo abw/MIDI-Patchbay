@@ -1,4 +1,6 @@
 #include "Menu.hpp"
+#include "Oscillator.hpp"
+#include "Patch.hpp"
 
 unsigned int foo = 0, bar = 10;
 
@@ -29,6 +31,7 @@ void badgerDancer() {
 
 int main()
 {
+    printf("\nMenus\n-----------\n");
     MenuItem m1("Item One");
     MenuItem m2("Item Two");
 
@@ -53,5 +56,23 @@ int main()
     MenuItem *ms[] = { &m1, &m2, &m3, &c1, &c2, &c3, &c4, &c5, &ma };
     Menu m(9, ms);
     m.debug();
+
+    printf("\nOscillators\n-----------\n");
+    Oscillator o1;
+    Oscillator o2(2, 2, 180, 64, 192);
+    o1.debug();
+    o2.debug();
+
+    printf("\nPatches\n-----------\n");
+    Patch p1;
+    Patch p2;
+
+    printf("\nPatch 1\n-------\n");
+    p1.debug();
+
+    printf("\nPatch 2\n-------\n");
+    p2.debug();
+
+
     return 0;
 }
