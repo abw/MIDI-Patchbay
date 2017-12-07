@@ -1,0 +1,8 @@
+This directory is being used to develop and test a menu system for the LCD.
+
+It uses a regular desktop development environment rather than targetting 
+the Arduino.  This makes developing, testing and debugging considerably
+easier. 
+
+When it's nearing completion the code will be moved/merged into the 
+formware/MIDI-Patchbay directory.
