@@ -11,3 +11,4 @@ CTestTestfile.cmake
 *.so
 *.hso
 menus/src/program
+menus/src/ctest
