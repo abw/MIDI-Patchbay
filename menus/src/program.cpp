@@ -1,6 +1,5 @@
 #include "Menu.hpp"
-#include "Oscillator.hpp"
-#include "Patch.hpp"
+#include "patch.h"
 
 unsigned int foo = 0, bar = 10;
 
@@ -57,21 +56,15 @@ int main()
     Menu m(9, ms);
     m.debug();
 
-    printf("\nOscillators\n-----------\n");
-    Oscillator o1;
-    Oscillator o2(2, 2, 180, 64, 192);
-    o1.debug();
-    o2.debug();
-
     printf("\nPatches\n-----------\n");
     Patch p1;
-    Patch p2;
+    initPatch(&p1);
 
     printf("\nPatch 1\n-------\n");
-    p1.debug();
+    debugPatch(&p1);
 
-    printf("\nPatch 2\n-------\n");
-    p2.debug();
+    //printf("\nPatch 2\n-------\n");
+    //p2.debug();
 
 
     return 0;
